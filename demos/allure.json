@@ -1,0 +1,400 @@
+{
+    "uid": "3a1482a08c4b2bf6",
+    "name": "Login Salesforce",
+    "fullName": "features/salesforce.feature:5",
+    "historyId": "2a819dd3bc38da8c92bfd1db173ccf0f",
+    "time": {
+        "start": 1729032141698,
+        "stop": 1729032159717,
+        "duration": 18019
+    },
+    "status": "passed",
+    "flaky": false,
+    "newFailed": false,
+    "newBroken": false,
+    "newPassed": false,
+    "retriesCount": 0,
+    "retriesStatusChange": false,
+    "beforeStages": [
+        {
+            "name": "com.nttdata.ct.app.stepsdefinition.StepDefinitions.configurar()",
+            "time": {
+                "start": 1729032141700,
+                "stop": 1729032142931,
+                "duration": 1231
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [],
+            "parameters": [],
+            "hasContent": false,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 0,
+            "shouldDisplayMessage": false
+        }
+    ],
+    "testStage": {
+        "status": "passed",
+        "steps": [
+            {
+                "name": "Dado  que estoy en la página \"https://zorem-dev-ed.develop.my.salesforce.com/\"",
+                "time": {
+                    "start": 1729032142936,
+                    "stop": 1729032145467,
+                    "duration": 2531
+                },
+                "status": "passed",
+                "steps": [],
+                "attachments": [
+                    {
+                        "uid": "8aae704420326a1e",
+                        "name": "evidencia",
+                        "source": "8aae704420326a1e.png",
+                        "type": "image/png",
+                        "size": 180919
+                    }
+                ],
+                "parameters": [],
+                "hasContent": true,
+                "stepsCount": 0,
+                "attachmentStep": false,
+                "attachmentsCount": 1,
+                "shouldDisplayMessage": false
+            },
+            {
+                "name": "Y  ingreso en el elemento \"Username_Salesforce\" el valor \"kevinarnold.zorem@gmail.com\"",
+                "time": {
+                    "start": 1729032146550,
+                    "stop": 1729032147790,
+                    "duration": 1240
+                },
+                "status": "passed",
+                "steps": [],
+                "attachments": [
+                    {
+                        "uid": "f505d52f46dd9128",
+                        "name": "evidencia",
+                        "source": "f505d52f46dd9128.png",
+                        "type": "image/png",
+                        "size": 183494
+                    }
+                ],
+                "parameters": [],
+                "hasContent": true,
+                "stepsCount": 0,
+                "attachmentStep": false,
+                "attachmentsCount": 1,
+                "shouldDisplayMessage": false
+            },
+            {
+                "name": "Y  ingreso en el elemento \"Password_Salesforce\" el valor \"8hfBJR4xdcLINtw\"",
+                "time": {
+                    "start": 1729032148880,
+                    "stop": 1729032150069,
+                    "duration": 1189
+                },
+                "status": "passed",
+                "steps": [],
+                "attachments": [
+                    {
+                        "uid": "72e48f61104bddef",
+                        "name": "evidencia",
+                        "source": "72e48f61104bddef.png",
+                        "type": "image/png",
+                        "size": 183517
+                    }
+                ],
+                "parameters": [],
+                "hasContent": true,
+                "stepsCount": 0,
+                "attachmentStep": false,
+                "attachmentsCount": 1,
+                "shouldDisplayMessage": false
+            },
+            {
+                "name": "Y  hago clic en el elemento \"Login_Salesforce\"",
+                "time": {
+                    "start": 1729032151150,
+                    "stop": 1729032158433,
+                    "duration": 7283
+                },
+                "status": "passed",
+                "steps": [],
+                "attachments": [
+                    {
+                        "uid": "8537ac211639978",
+                        "name": "evidencia",
+                        "source": "8537ac211639978.png",
+                        "type": "image/png",
+                        "size": 6535
+                    }
+                ],
+                "parameters": [],
+                "hasContent": true,
+                "stepsCount": 0,
+                "attachmentStep": false,
+                "attachmentsCount": 1,
+                "shouldDisplayMessage": false
+            }
+        ],
+        "attachments": [],
+        "parameters": [],
+        "hasContent": true,
+        "stepsCount": 4,
+        "attachmentStep": false,
+        "attachmentsCount": 4,
+        "shouldDisplayMessage": false
+    },
+    "afterStages": [
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.beforeStep(io.cucumber.java.Scenario)",
+            "time": {
+                "start": 1729032142932,
+                "stop": 1729032142935,
+                "duration": 3
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [],
+            "parameters": [],
+            "hasContent": false,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 0,
+            "shouldDisplayMessage": false
+        },
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.afterStep(io.cucumber.java.Scenario)",
+            "time": {
+                "start": 1729032145468,
+                "stop": 1729032146550,
+                "duration": 1082
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [
+                {
+                    "uid": "c9cf7b17483b39a4",
+                    "name": "evidencia",
+                    "source": "c9cf7b17483b39a4.png",
+                    "type": "image/png",
+                    "size": 180919
+                }
+            ],
+            "parameters": [],
+            "hasContent": true,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 1,
+            "shouldDisplayMessage": false
+        },
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.beforeStep(io.cucumber.java.Scenario)",
+            "time": {
+                "start": 1729032146550,
+                "stop": 1729032146550,
+                "duration": 0
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [],
+            "parameters": [],
+            "hasContent": false,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 0,
+            "shouldDisplayMessage": false
+        },
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.afterStep(io.cucumber.java.Scenario)",
+            "time": {
+                "start": 1729032147790,
+                "stop": 1729032148880,
+                "duration": 1090
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [
+                {
+                    "uid": "10838abba8373529",
+                    "name": "evidencia",
+                    "source": "10838abba8373529.png",
+                    "type": "image/png",
+                    "size": 183494
+                }
+            ],
+            "parameters": [],
+            "hasContent": true,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 1,
+            "shouldDisplayMessage": false
+        },
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.beforeStep(io.cucumber.java.Scenario)",
+            "time": {
+                "start": 1729032148880,
+                "stop": 1729032148880,
+                "duration": 0
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [],
+            "parameters": [],
+            "hasContent": false,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 0,
+            "shouldDisplayMessage": false
+        },
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.afterStep(io.cucumber.java.Scenario)",
+            "time": {
+                "start": 1729032150069,
+                "stop": 1729032151149,
+                "duration": 1080
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [
+                {
+                    "uid": "c2998f0013802b2b",
+                    "name": "evidencia",
+                    "source": "c2998f0013802b2b.png",
+                    "type": "image/png",
+                    "size": 183517
+                }
+            ],
+            "parameters": [],
+            "hasContent": true,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 1,
+            "shouldDisplayMessage": false
+        },
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.beforeStep(io.cucumber.java.Scenario)",
+            "time": {
+                "start": 1729032151150,
+                "stop": 1729032151150,
+                "duration": 0
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [],
+            "parameters": [],
+            "hasContent": false,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 0,
+            "shouldDisplayMessage": false
+        },
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.afterStep(io.cucumber.java.Scenario)",
+            "time": {
+                "start": 1729032158433,
+                "stop": 1729032159543,
+                "duration": 1110
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [
+                {
+                    "uid": "c8fd159a148e021c",
+                    "name": "evidencia",
+                    "source": "c8fd159a148e021c.png",
+                    "type": "image/png",
+                    "size": 15355
+                }
+            ],
+            "parameters": [],
+            "hasContent": true,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 1,
+            "shouldDisplayMessage": false
+        },
+        {
+            "name": "com.nttdata.ct.app.runner.Hooks.tearDown()",
+            "time": {
+                "start": 1729032159543,
+                "stop": 1729032159716,
+                "duration": 173
+            },
+            "status": "passed",
+            "steps": [],
+            "attachments": [],
+            "parameters": [],
+            "hasContent": false,
+            "stepsCount": 0,
+            "attachmentStep": false,
+            "attachmentsCount": 0,
+            "shouldDisplayMessage": false
+        }
+    ],
+    "labels": [
+        {
+            "name": "tag",
+            "value": "salesforce"
+        },
+        {
+            "name": "host",
+            "value": "DESKTOP-QSOM2B5"
+        },
+        {
+            "name": "thread",
+            "value": "29260@DESKTOP-QSOM2B5.main(1)"
+        },
+        {
+            "name": "feature",
+            "value": "Salesforce Demo"
+        },
+        {
+            "name": "story",
+            "value": "Login Salesforce"
+        },
+        {
+            "name": "suite",
+            "value": "Salesforce Demo"
+        },
+        {
+            "name": "testClass",
+            "value": "Login Salesforce"
+        },
+        {
+            "name": "framework",
+            "value": "cucumber4jvm"
+        },
+        {
+            "name": "language",
+            "value": "java"
+        },
+        {
+            "name": "gherkin_uri",
+            "value": "classpath:features/salesforce.feature"
+        },
+        {
+            "name": "package",
+            "value": "features.salesforce_feature.Salesforce Demo"
+        },
+        {
+            "name": "resultFormat",
+            "value": "allure2"
+        }
+    ],
+    "parameters": [],
+    "links": [],
+    "hidden": false,
+    "retry": false,
+    "extra": {
+        "severity": "normal",
+        "retries": [],
+        "categories": [],
+        "tags": [
+            "salesforce"
+        ]
+    },
+    "source": "3a1482a08c4b2bf6.json",
+    "parameterValues": []
+}
