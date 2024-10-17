@@ -71496,7 +71496,7 @@ var ScriptBuilder = /** @class */ (function () {
                     _this.dblclick(bestSelector, causesNavigation);
                     break;
                 case _types__WEBPACK_IMPORTED_MODULE_1__.ActionType.Click:
-                    _this.click(bestSelector, causesNavigation);
+                    _this.click(bestSelector, causesNavigation, tagName);
                     break;
                 case _types__WEBPACK_IMPORTED_MODULE_1__.ActionType.Hover:
                     _this.hover(bestSelector, causesNavigation);
@@ -71852,8 +71852,8 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
             _this.pushCodes("Dado que estoy en la p\u00E1gina '" + url + "'");
             return _this;
         };
-        _this.click = function (selector, causesNavigation) {
-            var step = "Y hago clic en el elemento '" + selector + "'";
+        _this.click = function (selector, causesNavigation, tagname) {
+            var step = "Y hago clic en el " + tagname + " '" + selector + "'";
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -71959,10 +71959,10 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
         };
         _this.wheel = function (deltaX, deltaY) {
             if (deltaY > 0) {
-                _this.pushCodes("Y desplazo la p\u00E1gina " + deltaY + " hacia abajo.");
+                _this.pushCodes("Y desplazo la p\u00E1gina '" + Math.abs(deltaY) + "' hacia abajo.");
             }
             else if (deltaY < 0) {
-                _this.pushCodes("Y desplazo la p\u00E1gina " + deltaY + " hacia arriba.");
+                _this.pushCodes("Y desplazo la p\u00E1gina '" + Math.abs(deltaY) + "' hacia arriba.");
             }
             return _this;
         };
@@ -71984,8 +71984,8 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
                 .map(function (code, index) {
                 return code;
             })
-                .join('\n');
-            var script = _this.featureHeader + "\n" + formattedCodes;
+                .join('');
+            var script = "" + _this.featureHeader + formattedCodes;
             return script;
         };
         return _this;
@@ -73131,7 +73131,7 @@ module.exports = JSON.parse('{"0":"�","128":"€","130":"‚","131":"ƒ","132"
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("aa16797ec59d9329c61d")
+/******/ 		__webpack_require__.h = () => ("904c68007bcbf079966e")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

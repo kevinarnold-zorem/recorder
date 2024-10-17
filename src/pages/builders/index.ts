@@ -85,7 +85,7 @@ export class ActionContext extends BaseAction {
   }
 
   getDescription() {
-    const { type, selectors, tagName, value } = this.action;    
+    const { type, selectors, tagName, value } = this.action;
     switch (type) {
       case ActionType.Click:
         return `Click on <${tagName.toLowerCase()}> ${
@@ -94,11 +94,11 @@ export class ActionContext extends BaseAction {
             : getBestSelectorForAction(this.action, this.scriptType)
         }`;
       case ActionType.DblClick:
-          return `DblClick on <${tagName.toLowerCase()}> ${
-            selectors.text != null && selectors.text.length > 0
-              ? `"${truncateText(selectors.text.replace(/\s/g, ' '), 25)}"`
-              : getBestSelectorForAction(this.action, this.scriptType)
-          }`;  
+        return `DblClick on <${tagName.toLowerCase()}> ${
+          selectors.text != null && selectors.text.length > 0
+            ? `"${truncateText(selectors.text.replace(/\s/g, ' '), 25)}"`
+            : getBestSelectorForAction(this.action, this.scriptType)
+        }`;
       case ActionType.Hover:
         return `Hover over <${tagName.toLowerCase()}> ${
           selectors.text != null && selectors.text.length > 0
@@ -106,11 +106,11 @@ export class ActionContext extends BaseAction {
             : getBestSelectorForAction(this.action, this.scriptType)
         }`;
       case ActionType.Move:
-          return `Move to <${tagName.toLowerCase()}> ${
-            selectors.text != null && selectors.text.length > 0
-              ? `"${truncateText(selectors.text.replace(/\s/g, ' '), 25)}"`
-              : getBestSelectorForAction(this.action, this.scriptType)
-          }`;  
+        return `Move to <${tagName.toLowerCase()}> ${
+          selectors.text != null && selectors.text.length > 0
+            ? `"${truncateText(selectors.text.replace(/\s/g, ' '), 25)}"`
+            : getBestSelectorForAction(this.action, this.scriptType)
+        }`;
       case ActionType.Input:
         return `Fill ${truncateText(
           JSON.stringify(value ?? ''),
@@ -164,10 +164,13 @@ export abstract class ScriptBuilder {
     this.showComments = showComments;
   }
 
-  abstract click: (selector: string, causesNavigation: boolean) => this;
+  abstract click: (
+    selector: string,
+    causesNavigation: boolean,
+    tagName: string
+  ) => this;
 
   abstract dblclick: (selector: string, causesNavigation: boolean) => this;
-
 
   abstract hover: (selector: string, causesNavigation: boolean) => this;
 
@@ -240,7 +243,7 @@ export abstract class ScriptBuilder {
         this.dblclick(bestSelector as string, causesNavigation);
         break;
       case ActionType.Click:
-        this.click(bestSelector as string, causesNavigation);
+        this.click(bestSelector as string, causesNavigation, tagName);
         break;
       case ActionType.Hover:
         this.hover(bestSelector as string, causesNavigation);
@@ -686,7 +689,7 @@ Característica: Titulo del Scenario
 
   private waitForNavigation() {
     //return `Espero que la página termine de cargar.`;
-    return "";
+    return '';
   }
 
   load = (url: string) => {
@@ -694,8 +697,8 @@ Característica: Titulo del Scenario
     return this;
   };
 
-  click = (selector: string, causesNavigation: boolean) => {
-    const step = `Y hago clic en el elemento '${selector}'`;
+  click = (selector: string, causesNavigation: boolean, tagname: string) => {
+    const step = `Y hago clic en el ${tagname} '${selector}'`;
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());
@@ -718,10 +721,13 @@ Característica: Titulo del Scenario
 
   type = (selector: string, value: string, causesNavigation: boolean) => {
     var step;
-    if (value.includes("fakepath")) {
-      value = value.replace("C:",'').replace("fakepath",'').replace(/\\/g, '');
+    if (value.includes('fakepath')) {
+      value = value
+        .replace('C:', '')
+        .replace('fakepath', '')
+        .replace(/\\/g, '');
       step = `Y adjunto el archivo '${value}' al elemento '${selector}'`;
-    } else{
+    } else {
       step = `Y relleno el elemento '${selector}' con el valor '${value}'`;
     }
     if (causesNavigation) {
@@ -762,10 +768,13 @@ Característica: Titulo del Scenario
 
   fill = (selector: string, value: string, causesNavigation: boolean) => {
     var step;
-    if (value.includes("fakepath")) {
-      value = value.replace("C:",'').replace("fakepath",'').replace(/\\/g, '');
+    if (value.includes('fakepath')) {
+      value = value
+        .replace('C:', '')
+        .replace('fakepath', '')
+        .replace(/\\/g, '');
       step = `Y adjunto el archivo '${value}' al elemento '${selector}'`;
-    } else{
+    } else {
       step = `Y relleno el elemento '${selector}' con el valor '${value}'`;
     }
     if (causesNavigation) {
@@ -800,10 +809,12 @@ Característica: Titulo del Scenario
   };
 
   wheel = (deltaX: number, deltaY: number) => {
-    if(deltaY>0){
-      this.pushCodes(`Y desplazo la página ${deltaY} hacia abajo.`);
-    } else if(deltaY<0){
-      this.pushCodes(`Y desplazo la página ${deltaY} hacia arriba.`);
+    if (deltaY > 0) {
+      this.pushCodes(`Y desplazo la página '${Math.abs(deltaY)}' hacia abajo.`);
+    } else if (deltaY < 0) {
+      this.pushCodes(
+        `Y desplazo la página '${Math.abs(deltaY)}' hacia arriba.`
+      );
     }
     return this;
   };
@@ -832,14 +843,14 @@ Característica: Titulo del Scenario
 
   buildScript = (): string => {
     const formattedCodes = this.codes
-  .filter(code => !code.trim().startsWith('//')) 
-  .map((code, index) => {
-    return code;
-  })
-  .join('\n');
+      .filter((code) => !code.trim().startsWith('//'))
+      .map((code, index) => {
+        return code;
+      })
+      .join('');
 
-  const script = `${this.featureHeader}\n${formattedCodes}`;
-  return script;
+    const script = `${this.featureHeader}${formattedCodes}`;
+    return script;
   };
 }
 
