@@ -77994,7 +77994,14 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
             return _this;
         };
         _this.type = function (selector, value, causesNavigation) {
-            var step = "Y relleno el elemento '" + selector + "' con el valor '" + value + "'";
+            var step;
+            if (value.includes("fakepath")) {
+                value = value.replace("C:", '').replace("fakepath", '').replace(/\\/g, '');
+                step = "Y adjunto el archivo '" + value + "' al elemento '" + selector + "'";
+            }
+            else {
+                step = "Y relleno el elemento '" + selector + "' con el valor '" + value + "'";
+            }
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -78031,7 +78038,14 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
             return _this;
         };
         _this.fill = function (selector, value, causesNavigation) {
-            var step = "Y relleno el elemento '" + selector + "' con el valor '" + value + "'";
+            var step;
+            if (value.includes("fakepath")) {
+                value = value.replace("C:", '').replace("fakepath", '').replace(/\\/g, '');
+                step = "Y adjunto el archivo '" + value + "' al elemento '" + selector + "'";
+            }
+            else {
+                step = "Y relleno el elemento '" + selector + "' con el valor '" + value + "'";
+            }
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -81384,7 +81398,7 @@ module.exports = JSON.parse('{"0":"�","128":"€","130":"‚","131":"ƒ","132"
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("a9881bbd44a782ebafdd")
+/******/ 		__webpack_require__.h = () => ("aa16797ec59d9329c61d")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

@@ -717,7 +717,13 @@ Característica: Titulo del Scenario
   };
 
   type = (selector: string, value: string, causesNavigation: boolean) => {
-    const step = `Y relleno el elemento '${selector}' con el valor '${value}'`;
+    var step;
+    if (value.includes("fakepath")) {
+      value = value.replace("C:",'').replace("fakepath",'').replace(/\\/g, '');
+      step = `Y adjunto el archivo '${value}' al elemento '${selector}'`;
+    } else{
+      step = `Y relleno el elemento '${selector}' con el valor '${value}'`;
+    }
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());
@@ -755,7 +761,13 @@ Característica: Titulo del Scenario
   };
 
   fill = (selector: string, value: string, causesNavigation: boolean) => {
-    const step = `Y relleno el elemento '${selector}' con el valor '${value}'`;
+    var step;
+    if (value.includes("fakepath")) {
+      value = value.replace("C:",'').replace("fakepath",'').replace(/\\/g, '');
+      step = `Y adjunto el archivo '${value}' al elemento '${selector}'`;
+    } else{
+      step = `Y relleno el elemento '${selector}' con el valor '${value}'`;
+    }
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());
