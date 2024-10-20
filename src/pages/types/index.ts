@@ -13,6 +13,7 @@ export enum ScriptType {
   Playwright = 'playwright',
   Cypress = 'cypress',
   Gherkin = 'gherkin',
+  Locators = 'locators',
 }
 
 export enum ActionType {
@@ -70,6 +71,7 @@ export class BaseAction {
   timestamp: number;
   isPassword: boolean;
   hasOnlyText: boolean; // If the element only has text content inside (hint to use text selector)
+  attributes?: { [key: string]: string };
 }
 
 class KeydownAction extends BaseAction {

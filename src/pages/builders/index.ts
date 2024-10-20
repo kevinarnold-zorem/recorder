@@ -67,6 +67,10 @@ export class ActionContext extends BaseAction {
     return this.action.tagName;
   }
 
+  getAttributes() {
+    return this.action.attributes;
+  }
+
   getValue() {
     return this.action.value;
   }
@@ -167,12 +171,21 @@ export abstract class ScriptBuilder {
   abstract click: (
     selector: string,
     causesNavigation: boolean,
-    tagName: string
+    tagName: string,
+    attributes: { [key: string]: string }
   ) => this;
 
-  abstract dblclick: (selector: string, causesNavigation: boolean) => this;
+  abstract dblclick: (
+    selector: string,
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
+  ) => this;
 
-  abstract hover: (selector: string, causesNavigation: boolean) => this;
+  abstract hover: (
+    selector: string,
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
+  ) => this;
 
   abstract move: (selector: string, causesNavigation: boolean) => this;
 
@@ -183,13 +196,15 @@ export abstract class ScriptBuilder {
   abstract fill: (
     selector: string,
     value: string,
-    causesNavigation: boolean
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
   ) => this;
 
   abstract type: (
     selector: string,
     value: string,
-    causesNavigation: boolean
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
   ) => this;
 
   abstract keydown: (
@@ -201,7 +216,8 @@ export abstract class ScriptBuilder {
   abstract select: (
     selector: string,
     key: string,
-    causesNavigation: boolean
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
   ) => this;
 
   abstract wheel: (
@@ -232,21 +248,29 @@ export abstract class ScriptBuilder {
 
     const bestSelector = actionContext.getBestSelector();
     const tagName = actionContext.getTagName();
+    const attributes = actionContext.getAttributes() ?? {};
+
     const value = actionContext.getValue();
     const inputType = actionContext.getInputType();
+    const type = actionContext.getType();
     const { causesNavigation } = actionContext.getActionState();
     // (FIXME: getters for special fields)
     const action: any = actionContext.getAction();
 
     switch (actionContext.getType()) {
       case ActionType.DblClick:
-        this.dblclick(bestSelector as string, causesNavigation);
+        this.dblclick(bestSelector as string, causesNavigation, attributes);
         break;
       case ActionType.Click:
-        this.click(bestSelector as string, causesNavigation, tagName);
+        this.click(
+          bestSelector as string,
+          causesNavigation,
+          tagName,
+          attributes
+        );
         break;
       case ActionType.Hover:
-        this.hover(bestSelector as string, causesNavigation);
+        this.hover(bestSelector as string, causesNavigation, attributes);
         break;
       case ActionType.Move:
         this.move(bestSelector as string, causesNavigation);
@@ -260,7 +284,12 @@ export abstract class ScriptBuilder {
         break;
       case ActionType.Input: {
         if (tagName === TagName.Select) {
-          this.select(bestSelector as string, value ?? '', causesNavigation);
+          this.select(
+            bestSelector as string,
+            value ?? '',
+            causesNavigation,
+            attributes
+          );
         } else if (
           // If the input is "fillable" or a text area
           tagName === TagName.Input &&
@@ -268,11 +297,26 @@ export abstract class ScriptBuilder {
           FILLABLE_INPUT_TYPES.includes(inputType)
         ) {
           // Do more actionability checks
-          this.fill(bestSelector as string, value ?? '', causesNavigation);
+          this.fill(
+            bestSelector as string,
+            value ?? '',
+            causesNavigation,
+            attributes
+          );
         } else if (tagName === TagName.TextArea) {
-          this.fill(bestSelector as string, value ?? '', causesNavigation);
+          this.fill(
+            bestSelector as string,
+            value ?? '',
+            causesNavigation,
+            attributes
+          );
         } else {
-          this.type(bestSelector as string, value ?? '', causesNavigation);
+          this.type(
+            bestSelector as string,
+            value ?? '',
+            causesNavigation,
+            attributes
+          );
         }
         break;
       }
@@ -676,6 +720,41 @@ ${this.codes.join('')}
 }
 
 export class GherkinScriptBuilder extends ScriptBuilder {
+  /*private formatAttributes(attributes: { [key: string]: string } = {}): string {
+    return Object.entries(attributes)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(' '); // Retorna los atributos en formato `key="value"`
+  }*/
+
+  private formatAttributes(attributes: { [key: string]: string }): string {
+    const priorityAttributes = [
+      'value',
+      'placeholder',
+      'name',
+      'title',
+      'alt',
+      'aria-label',
+      'class',
+      'data-*',
+    ];
+
+    for (const attr of priorityAttributes) {
+      if (attr === 'data-*') {
+        // Devuelve el primer atributo data-* que encuentre
+        const dataAttr = Object.keys(attributes).find((key) =>
+          key.startsWith('data-')
+        );
+        if (dataAttr) {
+          return `${dataAttr}="${attributes[dataAttr]}"`;
+        }
+      } else if (attributes[attr]) {
+        return `${attributes[attr]}`;
+      }
+    }
+
+    return 'WebElement';
+  }
+
   private featureHeader: string = `
 #language: es
 Característica: Titulo del Scenario
@@ -697,8 +776,15 @@ Característica: Titulo del Scenario
     return this;
   };
 
-  click = (selector: string, causesNavigation: boolean, tagname: string) => {
-    const step = `Y hago clic en el ${tagname} '${selector}'`;
+  click = (
+    selector: string,
+    causesNavigation: boolean,
+    tagname: string,
+    atributos: { [key: string]: string }
+  ) => {
+    const attributes = this.formatAttributes(atributos); // Obtenemos todos los atributos
+    //const step = `Y hago clic en el ${tagname.toLowerCase()} '${selector}' con atributos ${attributes}`;
+    const step = `Y hago clic en el elemento '${attributes}'`;
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());
@@ -708,8 +794,14 @@ Característica: Titulo del Scenario
     return this;
   };
 
-  dblclick = (selector: string, causesNavigation: boolean) => {
-    const step = `Y hago doble click en el elemento '${selector}'`;
+  dblclick = (
+    selector: string,
+    causesNavigation: boolean,
+    atributos: { [key: string]: string }
+  ) => {
+    const attributes = this.formatAttributes(atributos); // Obtenemos todos los atributos
+
+    const step = `Y hago doble click en el elemento '${attributes}'`;
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());
@@ -719,8 +811,15 @@ Característica: Titulo del Scenario
     return this;
   };
 
-  type = (selector: string, value: string, causesNavigation: boolean) => {
+  type = (
+    selector: string,
+    value: string,
+    causesNavigation: boolean,
+    atributos: { [key: string]: string }
+  ) => {
     var step;
+    const attributes = this.formatAttributes(atributos); // Obtenemos todos los atributos
+
     if (value.includes('fakepath')) {
       value = value
         .replace('C:', '')
@@ -728,7 +827,7 @@ Característica: Titulo del Scenario
         .replace(/\\/g, '');
       step = `Y adjunto el archivo '${value}' al elemento '${selector}'`;
     } else {
-      step = `Y relleno el elemento '${selector}' con el valor '${value}'`;
+      step = `Y relleno el elemento '${attributes}' con el valor '${value}'`;
     }
     if (causesNavigation) {
       this.pushCodes(step);
@@ -744,8 +843,13 @@ Característica: Titulo del Scenario
     return this;
   };
 
-  hover = (selector: string, causesNavigation: boolean) => {
-    const step = `Y paso el cursor sobre el elemento '${selector}'`;
+  hover = (
+    selector: string,
+    causesNavigation: boolean,
+    atributos: { [key: string]: string }
+  ) => {
+    const attributes = this.formatAttributes(atributos); // Obtenemos todos los atributos
+    const step = `Y paso el cursor sobre el elemento '${attributes}'`;
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());
@@ -766,16 +870,23 @@ Característica: Titulo del Scenario
     return this;
   };
 
-  fill = (selector: string, value: string, causesNavigation: boolean) => {
+  fill = (
+    selector: string,
+    value: string,
+    causesNavigation: boolean,
+    atributos: { [key: string]: string }
+  ) => {
     var step;
+    const attributes = this.formatAttributes(atributos); // Obtenemos todos los atributos
+
     if (value.includes('fakepath')) {
       value = value
         .replace('C:', '')
         .replace('fakepath', '')
         .replace(/\\/g, '');
-      step = `Y adjunto el archivo '${value}' al elemento '${selector}'`;
+      step = `Y adjunto el archivo '${value}' al elemento '${attributes}'`;
     } else {
-      step = `Y relleno el elemento '${selector}' con el valor '${value}'`;
+      step = `Y relleno el elemento '${attributes}' con el valor '${value}'`;
     }
     if (causesNavigation) {
       this.pushCodes(step);
@@ -797,8 +908,14 @@ Característica: Titulo del Scenario
     return this;
   };
 
-  select = (selector: string, option: string, causesNavigation: boolean) => {
-    const step = `Y selecciono la opción '${option}' en el elemento '${selector}'`;
+  select = (
+    selector: string,
+    option: string,
+    causesNavigation: boolean,
+    atributos: { [key: string]: string }
+  ) => {
+    const attributes = this.formatAttributes(atributos); // Obtenemos todos los atributos
+    const step = `Y selecciono la opción '${option}' en el elemento '${attributes}'`;
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());
@@ -851,6 +968,165 @@ Característica: Titulo del Scenario
 
     const script = `${this.featureHeader}${formattedCodes}`;
     return script;
+  };
+}
+
+export class LocatorsScriptBuilder extends ScriptBuilder {
+  private formatAttributes(attributes: { [key: string]: string }): string {
+    const priorityAttributes = [
+      'value',
+      'placeholder',
+      'name',
+      'title',
+      'alt',
+      'aria-label',
+      'class',
+      'data-*',
+    ];
+
+    for (const attr of priorityAttributes) {
+      if (attr === 'data-*') {
+        // Devuelve el primer atributo data-* que encuentre
+        const dataAttr = Object.keys(attributes).find((key) =>
+          key.startsWith('data-')
+        );
+        if (dataAttr) {
+          return `${dataAttr}`;
+        }
+      } else if (attributes[attr]) {
+        return `${attributes[attr]}`;
+      }
+    }
+
+    return 'element'; // Nombre predeterminado si no hay atributos
+  }
+
+  click = (
+    selector: string,
+    causesNavigation: boolean,
+    tagName: string,
+    attributes: { [key: string]: string }
+  ) => {
+    const attr = this.formatAttributes(attributes);
+    const step = `${attr}:@: ${selector}`;
+    this.pushCodes(step);
+    return this;
+  };
+
+  dblclick = (
+    selector: string,
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
+  ) => {
+    const attr = this.formatAttributes(attributes);
+    const step = `${attr}:@: ${selector}`;
+    this.pushCodes(step);
+    return this;
+  };
+
+  type = (
+    selector: string,
+    value: string,
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
+  ) => {
+    const attr = this.formatAttributes(attributes);
+    const step = `${attr}:@: ${selector}`;
+    this.pushCodes(step);
+    return this;
+  };
+
+  hover = (
+    selector: string,
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
+  ) => {
+    const attr = this.formatAttributes(attributes);
+    const step = `${attr}:@: ${selector}`;
+    this.pushCodes(step);
+    return this;
+  };
+
+  select = (
+    selector: string,
+    option: string,
+    causesNavigation: boolean,
+    attributes: { [key: string]: string }
+  ) => {
+    const attr = this.formatAttributes(attributes);
+    const step = `${attr}:@: ${selector}`;
+    this.pushCodes(step);
+    return this;
+  };
+
+  move = (selector: string, causesNavigation: boolean) => {
+    //this.pushCodes(`move:@: ${selector}`);
+    return this;
+  };
+
+  load = (url: string) => {
+    //this.pushCodes(`load:@: ${url}`);
+    return this;
+  };
+
+  resize = (width: number, height: number) => {
+    //this.pushCodes(`resize:@: ${width}x${height}`);
+    return this;
+  };
+
+  fill = (
+    selector: string,
+    value: string,
+    causesNavigation: boolean,
+    atributos: { [key: string]: string }
+  ) => {
+    const attr = this.formatAttributes(atributos);
+    const step = `${attr}:@: ${selector}`;
+    this.pushCodes(step);
+    return this;
+  };
+
+  keydown = (selector: string, key: string, causesNavigation: boolean) => {
+    //this.pushCodes(`keydown:@: ${key} on ${selector}`);
+    return this;
+  };
+
+  wheel = (
+    deltaX: number,
+    deltaY: number,
+    pageXOffset?: number,
+    pageYOffset?: number
+  ) => {
+    //this.pushCodes(`wheel:@: deltaX:${deltaX}, deltaY:${deltaY}`);
+    return this;
+  };
+
+  dragAndDrop = (
+    sourceX: number,
+    sourceY: number,
+    targetX: number,
+    targetY: number
+  ) => {
+    //this.pushCodes(`dragAndDrop:@: from (${sourceX}, ${sourceY}) to (${targetX}, ${targetY})`);
+    return this;
+  };
+
+  fullScreenshot = () => {
+    //this.pushCodes('fullScreenshot:@: captured');
+    return this;
+  };
+
+  awaitText = (text: string) => {
+    //this.pushCodes(`awaitText:@: waiting for '${text}'`);
+    return this;
+  };
+
+  buildScript = (): string => {
+    const formattedCodes = this.codes
+      .filter((code) => code.includes(':@:'))
+      .join('');
+
+    return formattedCodes;
   };
 }
 
@@ -967,6 +1243,9 @@ export const genCode = (
       break;
     case ScriptType.Gherkin:
       scriptBuilder = new GherkinScriptBuilder(showComments);
+      break;
+    case ScriptType.Locators:
+      scriptBuilder = new LocatorsScriptBuilder(showComments);
       break;
     default:
       throw new Error('Unsupported script type');

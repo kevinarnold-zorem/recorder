@@ -1,6 +1,7 @@
 import debounce from 'lodash.debounce';
 
-import genSelectors from '../builders/selector';
+import genSelectors, { getAllAttributes } from '../builders/selector';
+
 import { localStorageGet } from '../Common/utils';
 
 import { ActionType, BaseAction, ResizeAction, TagName } from '../types';
@@ -53,6 +54,7 @@ function buildBaseAction(
     timestamp: event.timeStamp,
     hasOnlyText: target.children.length === 0 && target.innerText.length > 0,
     value: undefined,
+    attributes: getAllAttributes(target) ?? {},
   };
 }
 

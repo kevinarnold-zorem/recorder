@@ -40,6 +40,9 @@ export default function ScriptTypeSelect({
       <option value={ScriptType.Gherkin}>
         Gherkin{!shortDescription ? ' Library' : ''}
       </option>
+      <option value={ScriptType.Locators}>
+        Locators{!shortDescription ? ' Library' : ''}
+      </option>
     </select>
   );
 }

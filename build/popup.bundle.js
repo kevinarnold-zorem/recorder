@@ -75898,6 +75898,9 @@ function ScriptTypeSelect(_a) {
             !shortDescription ? ' Library' : ''),
         react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", { value: _types__WEBPACK_IMPORTED_MODULE_1__.ScriptType.Gherkin },
             "Gherkin",
+            !shortDescription ? ' Library' : ''),
+        react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", { value: _types__WEBPACK_IMPORTED_MODULE_1__.ScriptType.Locators },
+            "Locators",
             !shortDescription ? ' Library' : '')));
 }
 
@@ -77465,6 +77468,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "PlaywrightScriptBuilder": () => (/* binding */ PlaywrightScriptBuilder),
 /* harmony export */   "PuppeteerScriptBuilder": () => (/* binding */ PuppeteerScriptBuilder),
 /* harmony export */   "GherkinScriptBuilder": () => (/* binding */ GherkinScriptBuilder),
+/* harmony export */   "LocatorsScriptBuilder": () => (/* binding */ LocatorsScriptBuilder),
 /* harmony export */   "CypressScriptBuilder": () => (/* binding */ CypressScriptBuilder),
 /* harmony export */   "genCode": () => (/* binding */ genCode)
 /* harmony export */ });
@@ -77536,6 +77540,9 @@ var ActionContext = /** @class */ (function (_super) {
     ActionContext.prototype.getTagName = function () {
         return this.action.tagName;
     };
+    ActionContext.prototype.getAttributes = function () {
+        return this.action.attributes;
+    };
     ActionContext.prototype.getValue = function () {
         return this.action.value;
     };
@@ -77598,37 +77605,39 @@ var ScriptBuilder = /** @class */ (function () {
     function ScriptBuilder(showComments) {
         var _this = this;
         this.transformActionIntoCodes = function (actionContext) {
-            var _a;
+            var _a, _b;
             if (_this.showComments) {
                 var actionDescription = actionContext.getDescription();
                 _this.pushComments("// " + actionDescription);
             }
             var bestSelector = actionContext.getBestSelector();
             var tagName = actionContext.getTagName();
+            var attributes = (_a = actionContext.getAttributes()) !== null && _a !== void 0 ? _a : {};
             var value = actionContext.getValue();
             var inputType = actionContext.getInputType();
+            var type = actionContext.getType();
             var causesNavigation = actionContext.getActionState().causesNavigation;
             // (FIXME: getters for special fields)
             var action = actionContext.getAction();
             switch (actionContext.getType()) {
                 case _types__WEBPACK_IMPORTED_MODULE_1__.ActionType.DblClick:
-                    _this.dblclick(bestSelector, causesNavigation);
+                    _this.dblclick(bestSelector, causesNavigation, attributes);
                     break;
                 case _types__WEBPACK_IMPORTED_MODULE_1__.ActionType.Click:
-                    _this.click(bestSelector, causesNavigation, tagName);
+                    _this.click(bestSelector, causesNavigation, tagName, attributes);
                     break;
                 case _types__WEBPACK_IMPORTED_MODULE_1__.ActionType.Hover:
-                    _this.hover(bestSelector, causesNavigation);
+                    _this.hover(bestSelector, causesNavigation, attributes);
                     break;
                 case _types__WEBPACK_IMPORTED_MODULE_1__.ActionType.Move:
                     _this.move(bestSelector, causesNavigation);
                     break;
                 case _types__WEBPACK_IMPORTED_MODULE_1__.ActionType.Keydown:
-                    _this.keydown(bestSelector, (_a = action.key) !== null && _a !== void 0 ? _a : '', causesNavigation);
+                    _this.keydown(bestSelector, (_b = action.key) !== null && _b !== void 0 ? _b : '', causesNavigation);
                     break;
                 case _types__WEBPACK_IMPORTED_MODULE_1__.ActionType.Input: {
                     if (tagName === _types__WEBPACK_IMPORTED_MODULE_1__.TagName.Select) {
-                        _this.select(bestSelector, value !== null && value !== void 0 ? value : '', causesNavigation);
+                        _this.select(bestSelector, value !== null && value !== void 0 ? value : '', causesNavigation, attributes);
                     }
                     else if (
                     // If the input is "fillable" or a text area
@@ -77636,13 +77645,13 @@ var ScriptBuilder = /** @class */ (function () {
                         inputType != null &&
                         FILLABLE_INPUT_TYPES.includes(inputType)) {
                         // Do more actionability checks
-                        _this.fill(bestSelector, value !== null && value !== void 0 ? value : '', causesNavigation);
+                        _this.fill(bestSelector, value !== null && value !== void 0 ? value : '', causesNavigation, attributes);
                     }
                     else if (tagName === _types__WEBPACK_IMPORTED_MODULE_1__.TagName.TextArea) {
-                        _this.fill(bestSelector, value !== null && value !== void 0 ? value : '', causesNavigation);
+                        _this.fill(bestSelector, value !== null && value !== void 0 ? value : '', causesNavigation, attributes);
                     }
                     else {
-                        _this.type(bestSelector, value !== null && value !== void 0 ? value : '', causesNavigation);
+                        _this.type(bestSelector, value !== null && value !== void 0 ? value : '', causesNavigation, attributes);
                     }
                     break;
                 }
@@ -77965,14 +77974,21 @@ var PuppeteerScriptBuilder = /** @class */ (function (_super) {
 var GherkinScriptBuilder = /** @class */ (function (_super) {
     __extends(GherkinScriptBuilder, _super);
     function GherkinScriptBuilder() {
+        /*private formatAttributes(attributes: { [key: string]: string } = {}): string {
+          return Object.entries(attributes)
+            .map(([key, value]) => `${key}="${value}"`)
+            .join(' '); // Retorna los atributos en formato `key="value"`
+        }*/
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.featureHeader = "\n#language: es\nCaracter\u00EDstica: Titulo del Scenario\n\n  @untag\n  Escenario: Nombre del Scenario - no voy hacer todo";
         _this.load = function (url) {
             _this.pushCodes("Dado que estoy en la p\u00E1gina '" + url + "'");
             return _this;
         };
-        _this.click = function (selector, causesNavigation, tagname) {
-            var step = "Y hago clic en el " + tagname + " '" + selector + "'";
+        _this.click = function (selector, causesNavigation, tagname, atributos) {
+            var attributes = _this.formatAttributes(atributos); // Obtenemos todos los atributos
+            //const step = `Y hago clic en el ${tagname.toLowerCase()} '${selector}' con atributos ${attributes}`;
+            var step = "Y hago clic en el elemento '" + attributes + "'";
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -77982,8 +77998,9 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
             }
             return _this;
         };
-        _this.dblclick = function (selector, causesNavigation) {
-            var step = "Y hago doble click en el elemento '" + selector + "'";
+        _this.dblclick = function (selector, causesNavigation, atributos) {
+            var attributes = _this.formatAttributes(atributos); // Obtenemos todos los atributos
+            var step = "Y hago doble click en el elemento '" + attributes + "'";
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -77993,14 +78010,18 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
             }
             return _this;
         };
-        _this.type = function (selector, value, causesNavigation) {
+        _this.type = function (selector, value, causesNavigation, atributos) {
             var step;
-            if (value.includes("fakepath")) {
-                value = value.replace("C:", '').replace("fakepath", '').replace(/\\/g, '');
+            var attributes = _this.formatAttributes(atributos); // Obtenemos todos los atributos
+            if (value.includes('fakepath')) {
+                value = value
+                    .replace('C:', '')
+                    .replace('fakepath', '')
+                    .replace(/\\/g, '');
                 step = "Y adjunto el archivo '" + value + "' al elemento '" + selector + "'";
             }
             else {
-                step = "Y relleno el elemento '" + selector + "' con el valor '" + value + "'";
+                step = "Y relleno el elemento '" + attributes + "' con el valor '" + value + "'";
             }
             if (causesNavigation) {
                 _this.pushCodes(step);
@@ -78015,8 +78036,9 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
             //this.pushCodes(`# Cambiar el tamaño de la ventana a ${width}x${height}\nY cambio el tamaño de la ventana a ${width}x${height}`);
             return _this;
         };
-        _this.hover = function (selector, causesNavigation) {
-            var step = "Y paso el cursor sobre el elemento '" + selector + "'";
+        _this.hover = function (selector, causesNavigation, atributos) {
+            var attributes = _this.formatAttributes(atributos); // Obtenemos todos los atributos
+            var step = "Y paso el cursor sobre el elemento '" + attributes + "'";
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -78037,14 +78059,18 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
             }
             return _this;
         };
-        _this.fill = function (selector, value, causesNavigation) {
+        _this.fill = function (selector, value, causesNavigation, atributos) {
             var step;
-            if (value.includes("fakepath")) {
-                value = value.replace("C:", '').replace("fakepath", '').replace(/\\/g, '');
-                step = "Y adjunto el archivo '" + value + "' al elemento '" + selector + "'";
+            var attributes = _this.formatAttributes(atributos); // Obtenemos todos los atributos
+            if (value.includes('fakepath')) {
+                value = value
+                    .replace('C:', '')
+                    .replace('fakepath', '')
+                    .replace(/\\/g, '');
+                step = "Y adjunto el archivo '" + value + "' al elemento '" + attributes + "'";
             }
             else {
-                step = "Y relleno el elemento '" + selector + "' con el valor '" + value + "'";
+                step = "Y relleno el elemento '" + attributes + "' con el valor '" + value + "'";
             }
             if (causesNavigation) {
                 _this.pushCodes(step);
@@ -78065,8 +78091,9 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
             }*/
             return _this;
         };
-        _this.select = function (selector, option, causesNavigation) {
-            var step = "Y selecciono la opci\u00F3n '" + option + "' en el elemento '" + selector + "'";
+        _this.select = function (selector, option, causesNavigation, atributos) {
+            var attributes = _this.formatAttributes(atributos); // Obtenemos todos los atributos
+            var step = "Y selecciono la opci\u00F3n '" + option + "' en el elemento '" + attributes + "'";
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -78109,14 +78136,151 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
         };
         return _this;
     }
+    GherkinScriptBuilder.prototype.formatAttributes = function (attributes) {
+        var e_2, _a;
+        var priorityAttributes = ['value', 'placeholder', 'name', 'title', 'alt', 'aria-label', 'class', 'data-*'];
+        try {
+            for (var priorityAttributes_1 = __values(priorityAttributes), priorityAttributes_1_1 = priorityAttributes_1.next(); !priorityAttributes_1_1.done; priorityAttributes_1_1 = priorityAttributes_1.next()) {
+                var attr = priorityAttributes_1_1.value;
+                if (attr === 'data-*') {
+                    // Devuelve el primer atributo data-* que encuentre
+                    var dataAttr = Object.keys(attributes).find(function (key) { return key.startsWith('data-'); });
+                    if (dataAttr) {
+                        return dataAttr + "=\"" + attributes[dataAttr] + "\"";
+                    }
+                }
+                else if (attributes[attr]) {
+                    return "" + attributes[attr];
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (priorityAttributes_1_1 && !priorityAttributes_1_1.done && (_a = priorityAttributes_1.return)) _a.call(priorityAttributes_1);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return 'WebElement';
+    };
     GherkinScriptBuilder.prototype.waitForSelector = function (selector) {
         return "Espero que el elemento con el selector '" + selector + "' est\u00E9 visible.";
     };
     GherkinScriptBuilder.prototype.waitForNavigation = function () {
         //return `Espero que la página termine de cargar.`;
-        return "";
+        return '';
     };
     return GherkinScriptBuilder;
+}(ScriptBuilder));
+
+var LocatorsScriptBuilder = /** @class */ (function (_super) {
+    __extends(LocatorsScriptBuilder, _super);
+    function LocatorsScriptBuilder() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.click = function (selector, causesNavigation, tagName, attributes) {
+            var attr = _this.formatAttributes(attributes);
+            var step = attr + ":@: " + selector;
+            _this.pushCodes(step);
+            return _this;
+        };
+        _this.dblclick = function (selector, causesNavigation, attributes) {
+            var attr = _this.formatAttributes(attributes);
+            var step = attr + ":@: " + selector;
+            _this.pushCodes(step);
+            return _this;
+        };
+        _this.type = function (selector, value, causesNavigation, attributes) {
+            var attr = _this.formatAttributes(attributes);
+            var step = attr + ":@: " + selector;
+            _this.pushCodes(step);
+            return _this;
+        };
+        _this.hover = function (selector, causesNavigation, attributes) {
+            var attr = _this.formatAttributes(attributes);
+            var step = attr + ":@: " + selector;
+            _this.pushCodes(step);
+            return _this;
+        };
+        _this.select = function (selector, option, causesNavigation, attributes) {
+            var attr = _this.formatAttributes(attributes);
+            var step = attr + ":@: " + selector;
+            _this.pushCodes(step);
+            return _this;
+        };
+        _this.move = function (selector, causesNavigation) {
+            //this.pushCodes(`move:@: ${selector}`);
+            return _this;
+        };
+        _this.load = function (url) {
+            //this.pushCodes(`load:@: ${url}`);
+            return _this;
+        };
+        _this.resize = function (width, height) {
+            //this.pushCodes(`resize:@: ${width}x${height}`);
+            return _this;
+        };
+        _this.fill = function (selector, value, causesNavigation, atributos) {
+            var attr = _this.formatAttributes(atributos);
+            var step = attr + ":@: " + selector;
+            _this.pushCodes(step);
+            return _this;
+        };
+        _this.keydown = function (selector, key, causesNavigation) {
+            //this.pushCodes(`keydown:@: ${key} on ${selector}`);
+            return _this;
+        };
+        _this.wheel = function (deltaX, deltaY, pageXOffset, pageYOffset) {
+            //this.pushCodes(`wheel:@: deltaX:${deltaX}, deltaY:${deltaY}`);
+            return _this;
+        };
+        _this.dragAndDrop = function (sourceX, sourceY, targetX, targetY) {
+            //this.pushCodes(`dragAndDrop:@: from (${sourceX}, ${sourceY}) to (${targetX}, ${targetY})`);
+            return _this;
+        };
+        _this.fullScreenshot = function () {
+            //this.pushCodes('fullScreenshot:@: captured');
+            return _this;
+        };
+        _this.awaitText = function (text) {
+            //this.pushCodes(`awaitText:@: waiting for '${text}'`);
+            return _this;
+        };
+        _this.buildScript = function () {
+            var formattedCodes = _this.codes
+                .filter(function (code) { return code.includes(":@:"); })
+                .join('');
+            return formattedCodes;
+        };
+        return _this;
+    }
+    LocatorsScriptBuilder.prototype.formatAttributes = function (attributes) {
+        var e_3, _a;
+        var priorityAttributes = ['value', 'placeholder', 'name', 'title', 'alt', 'aria-label', 'class', 'data-*'];
+        try {
+            for (var priorityAttributes_2 = __values(priorityAttributes), priorityAttributes_2_1 = priorityAttributes_2.next(); !priorityAttributes_2_1.done; priorityAttributes_2_1 = priorityAttributes_2.next()) {
+                var attr = priorityAttributes_2_1.value;
+                if (attr === 'data-*') {
+                    // Devuelve el primer atributo data-* que encuentre
+                    var dataAttr = Object.keys(attributes).find(function (key) { return key.startsWith('data-'); });
+                    if (dataAttr) {
+                        return "" + dataAttr;
+                    }
+                }
+                else if (attributes[attr]) {
+                    return "" + attributes[attr];
+                }
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (priorityAttributes_2_1 && !priorityAttributes_2_1.done && (_a = priorityAttributes_2.return)) _a.call(priorityAttributes_2);
+            }
+            finally { if (e_3) throw e_3.error; }
+        }
+        return 'element'; // Nombre predeterminado si no hay atributos
+    };
+    return LocatorsScriptBuilder;
 }(ScriptBuilder));
 
 var CypressScriptBuilder = /** @class */ (function (_super) {
@@ -78204,6 +78368,9 @@ var genCode = function (actions, showComments, scriptType) {
         case _types__WEBPACK_IMPORTED_MODULE_1__.ScriptType.Gherkin:
             scriptBuilder = new GherkinScriptBuilder(showComments);
             break;
+        case _types__WEBPACK_IMPORTED_MODULE_1__.ScriptType.Locators:
+            scriptBuilder = new LocatorsScriptBuilder(showComments);
+            break;
         default:
             throw new Error('Unsupported script type');
     }
@@ -78234,11 +78401,37 @@ var genCode = function (actions, showComments, scriptType) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getAllAttributes": () => (/* binding */ getAllAttributes),
 /* harmony export */   "default": () => (/* binding */ genSelectors),
 /* harmony export */   "getBestSelectorForAction": () => (/* binding */ getBestSelectorForAction)
 /* harmony export */ });
 /* harmony import */ var _finder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./finder */ "./src/pages/builders/finder.ts");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../types */ "./src/pages/types/index.ts");
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 
 
 function genAttributeSet(element, attributes) {
@@ -78271,6 +78464,18 @@ function genSelectorForAttributes(element, attributes) {
 // isCharacterNumber
 function isCharacterNumber(char) {
     return char.length === 1 && char.match(/[0-9]/);
+}
+function getAllAttributes(element) {
+    if (!element) {
+        return {};
+    }
+    var attributes = __spreadArray([], __read(element.attributes), false).reduce(function (acc, attr) {
+        if (attr && attr.name && attr.value) {
+            acc[attr.name] = attr.value;
+        }
+        return acc;
+    }, {});
+    return attributes;
 }
 function genSelectors(element) {
     var _a;
@@ -78427,6 +78632,7 @@ var ScriptType;
     ScriptType["Playwright"] = "playwright";
     ScriptType["Cypress"] = "cypress";
     ScriptType["Gherkin"] = "gherkin";
+    ScriptType["Locators"] = "locators";
 })(ScriptType || (ScriptType = {}));
 var ActionType;
 (function (ActionType) {
@@ -81398,7 +81604,7 @@ module.exports = JSON.parse('{"0":"�","128":"€","130":"‚","131":"ƒ","132"
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("904c68007bcbf079966e")
+/******/ 		__webpack_require__.h = () => ("95d3070b36721a16c3cc")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

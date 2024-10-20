@@ -42,6 +42,26 @@ function isCharacterNumber(char: string) {
   return char.length === 1 && char.match(/[0-9]/);
 }
 
+export function getAllAttributes(element: HTMLElement): {
+  [key: string]: string;
+} {
+  if (!element) {
+    return {};
+  }
+
+  const attributes = [...element.attributes].reduce(
+    (acc: { [key: string]: string }, attr) => {
+      if (attr && attr.name && attr.value) {
+        acc[attr.name] = attr.value;
+      }
+      return acc;
+    },
+    {}
+  );
+
+  return attributes;
+}
+
 export default function genSelectors(element: HTMLElement | null) {
   if (element == null) {
     return null;
