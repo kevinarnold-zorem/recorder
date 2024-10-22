@@ -849,7 +849,7 @@ Característica: Titulo del Scenario
     atributos: { [key: string]: string }
   ) => {
     const attributes = this.formatAttributes(atributos); // Obtenemos todos los atributos
-    const step = `Y paso el cursor sobre el elemento '${attributes}'`;
+    const step = `Y hago hover en el elemento '${attributes}'`;
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());
@@ -915,7 +915,7 @@ Característica: Titulo del Scenario
     atributos: { [key: string]: string }
   ) => {
     const attributes = this.formatAttributes(atributos); // Obtenemos todos los atributos
-    const step = `Y selecciono la opción '${option}' en el elemento '${attributes}'`;
+    const step = `se pulsa sobre el desplegable '${attributes}' y selecciona el valor '${option}'`;
     if (causesNavigation) {
       this.pushCodes(step);
       this.pushCodes(this.waitForNavigation());

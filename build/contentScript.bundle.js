@@ -71920,7 +71920,7 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
         };
         _this.hover = function (selector, causesNavigation, atributos) {
             var attributes = _this.formatAttributes(atributos); // Obtenemos todos los atributos
-            var step = "Y paso el cursor sobre el elemento '" + attributes + "'";
+            var step = "Y hago hover en el elemento '" + attributes + "'";
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -71975,7 +71975,7 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
         };
         _this.select = function (selector, option, causesNavigation, atributos) {
             var attributes = _this.formatAttributes(atributos); // Obtenemos todos los atributos
-            var step = "Y selecciono la opci\u00F3n '" + option + "' en el elemento '" + attributes + "'";
+            var step = "se pulsa sobre el desplegable '" + attributes + "' y selecciona el valor '" + option + "'";
             if (causesNavigation) {
                 _this.pushCodes(step);
                 _this.pushCodes(_this.waitForNavigation());
@@ -72020,13 +72020,24 @@ var GherkinScriptBuilder = /** @class */ (function (_super) {
     }
     GherkinScriptBuilder.prototype.formatAttributes = function (attributes) {
         var e_2, _a;
-        var priorityAttributes = ['value', 'placeholder', 'name', 'title', 'alt', 'aria-label', 'class', 'data-*'];
+        var priorityAttributes = [
+            'value',
+            'placeholder',
+            'name',
+            'title',
+            'alt',
+            'aria-label',
+            'class',
+            'data-*',
+        ];
         try {
             for (var priorityAttributes_1 = __values(priorityAttributes), priorityAttributes_1_1 = priorityAttributes_1.next(); !priorityAttributes_1_1.done; priorityAttributes_1_1 = priorityAttributes_1.next()) {
                 var attr = priorityAttributes_1_1.value;
                 if (attr === 'data-*') {
                     // Devuelve el primer atributo data-* que encuentre
-                    var dataAttr = Object.keys(attributes).find(function (key) { return key.startsWith('data-'); });
+                    var dataAttr = Object.keys(attributes).find(function (key) {
+                        return key.startsWith('data-');
+                    });
                     if (dataAttr) {
                         return dataAttr + "=\"" + attributes[dataAttr] + "\"";
                     }
@@ -72129,7 +72140,7 @@ var LocatorsScriptBuilder = /** @class */ (function (_super) {
         };
         _this.buildScript = function () {
             var formattedCodes = _this.codes
-                .filter(function (code) { return code.includes(":@:"); })
+                .filter(function (code) { return code.includes(':@:'); })
                 .join('');
             return formattedCodes;
         };
@@ -72137,13 +72148,24 @@ var LocatorsScriptBuilder = /** @class */ (function (_super) {
     }
     LocatorsScriptBuilder.prototype.formatAttributes = function (attributes) {
         var e_3, _a;
-        var priorityAttributes = ['value', 'placeholder', 'name', 'title', 'alt', 'aria-label', 'class', 'data-*'];
+        var priorityAttributes = [
+            'value',
+            'placeholder',
+            'name',
+            'title',
+            'alt',
+            'aria-label',
+            'class',
+            'data-*',
+        ];
         try {
             for (var priorityAttributes_2 = __values(priorityAttributes), priorityAttributes_2_1 = priorityAttributes_2.next(); !priorityAttributes_2_1.done; priorityAttributes_2_1 = priorityAttributes_2.next()) {
                 var attr = priorityAttributes_2_1.value;
                 if (attr === 'data-*') {
                     // Devuelve el primer atributo data-* que encuentre
-                    var dataAttr = Object.keys(attributes).find(function (key) { return key.startsWith('data-'); });
+                    var dataAttr = Object.keys(attributes).find(function (key) {
+                        return key.startsWith('data-');
+                    });
                     if (dataAttr) {
                         return "" + dataAttr;
                     }
@@ -73338,7 +73360,7 @@ module.exports = JSON.parse('{"0":"�","128":"€","130":"‚","131":"ƒ","132"
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("95d3070b36721a16c3cc")
+/******/ 		__webpack_require__.h = () => ("953d6ea4be5bef85791e")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

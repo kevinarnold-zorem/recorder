@@ -1,19 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Context Menu con Botones</title>
+    <style>
+      /* Estilos para el menú contextual personalizado */
+      #customContextMenu {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 10000;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+      #customContextMenu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      #customContextMenu ul li {
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      #customContextMenu ul li:hover {
+        background-color: #ddd;
+      }
+      /* Estilos para los botones */
+      .boton {
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Botones con menú contextual personalizado</h2>
+
+    <!-- Botones generados dinámicamente -->
+    <button class="boton">Botón 1</button>
+    <button class="boton">Botón 2</button>
+    <button class="boton">Botón 3</button>
+    <button class="boton">Botón 4</button>
+
+    <!-- Menú contextual personalizado -->
+    <div id="customContextMenu">
+      <ul>
+        <li id="clickElementOption">Hacer click en este botón</li>
+      </ul>
+    </div>
+
     <script>
-        addEventListener("click", (event) => {
-            console.log("Click")
+      (function () {
+        // Crear el menú contextual personalizado
+        const customContextMenu = document.createElement('div');
+        customContextMenu.id = 'customContextMenu';
+        customContextMenu.innerHTML = `
+                <ul>
+                    <li id="clickElementOption">Hacer click en este botón</li>
+                </ul>
+            `;
+        document.body.appendChild(customContextMenu);
+
+        // Estilos para el menú contextual
+        const styles = `
+                #customContextMenu {
+                    display: none;
+                    position: absolute;
+                    background-color: white;
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                    z-index: 10000;
+                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                }
+                #customContextMenu ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                }
+                #customContextMenu ul li {
+                    padding: 8px 12px;
+                    cursor: pointer;
+                }
+                #customContextMenu ul li:hover {
+                    background-color: #ddd;
+                }
+            `;
+        const styleSheet = document.createElement('style');
+        styleSheet.type = 'text/css';
+        styleSheet.innerText = styles;
+        document.head.appendChild(styleSheet);
+
+        let elementoSeleccionado;
+
+        // Capturar el evento 'contextmenu' para mostrar el menú contextual
+        document.addEventListener('contextmenu', function (event) {
+          event.preventDefault(); // Prevenir el menú contextual predeterminado
+
+          // Obtener el elemento bajo el puntero
+          elementoSeleccionado = document.elementFromPoint(
+            event.clientX,
+            event.clientY
+          );
+
+          // Mostrar el menú contextual en la posición del mouse
+          customContextMenu.style.top = `${event.clientY}px`;
+          customContextMenu.style.left = `${event.clientX}px`;
+          customContextMenu.style.display = 'block';
         });
-        addEventListener("dblclick", (event) => {
-            console.log("Doble Click")
+
+        // Opción de hacer clic en el botón seleccionado
+        document
+          .getElementById('clickElementOption')
+          .addEventListener('click', function () {
+            if (elementoSeleccionado) {
+              console.log('Elemento seleccionado:', elementoSeleccionado); // Retornar el WebElement
+              elementoSeleccionado.click(); // Hacer clic programáticamente en el elemento
+            }
+            customContextMenu.style.display = 'none'; // Ocultar el menú después del clic
+          });
+
+        // Ocultar el menú contextual cuando se haga clic fuera
+        document.addEventListener('click', function () {
+          customContextMenu.style.display = 'none';
         });
-        
+      })();
+
+      window.inspecionarElemento = function () {
+        return new Promise(function (resolve) {
+          // Función que maneja el clic
+          function handleClique(event) {
+            var elementoClicado = event.target; // Obtener el elemento clicado
+            if (event.isTrusted) {
+              // Verificar que sea un clic izquierdo del usuario
+              event.preventDefault(); // Prevenir el comportamiento predeterminado
+              event.stopPropagation(); // Detener la propagación del evento
+              // Remover los listeners después del clic
+              document.removeEventListener('click', handleClique, true);
+              document.removeEventListener('contextmenu', handleClique, true);
+              // Resolver la promesa con el elemento clicado
+              console.log('Retornando elemento Clickado');
+              resolve(elementoClicado);
+            }
+          }
+
+          // Agregar los listeners para capturar tanto el clic izquierdo como el clic derecho
+          document.addEventListener('click', handleClique, true);
+        });
+      };
     </script>
-</body>
+  </body>
 </html>
